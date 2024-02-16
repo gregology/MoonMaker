@@ -14,12 +14,17 @@ This approach has the benefit of producing 3D models with realistic moon feature
 
 ## Moonscape Comparisons
 
-#### Rendered
-
-![image](https://github.com/gregology/MoonMaker/assets/1595448/a71dc3b7-cce8-4b0d-a3c4-e4319ffa19b8)
-
 #### Actual
 
 ![image](https://github.com/gregology/MoonMaker/assets/1595448/95e1b2e5-97a3-49a8-9577-69f8da2f12b7)
 
-Note: the sky is not dark enough and Blender is introducing a haze during the rendering process.
+Note: There is significant bias in our moonscape sample data as;
+ - spacecraft that lands on the moon chooses flatter areas to maximise successful landing
+ - humans are more likely to take photos of novel landscapes
+ - the quality of vision sensors continue to change
+
+#### Rendered
+
+![image](https://github.com/gregology/MoonMaker/assets/1595448/a71dc3b7-cce8-4b0d-a3c4-e4319ffa19b8)
+
+Note: The contrast is off as the sky is too light and the ground is too dark. Blender is also introducing a haze during the rendering process. The ground is too flat.
