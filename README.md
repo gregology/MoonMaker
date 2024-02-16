@@ -9,6 +9,7 @@ I considered a few solutions but ended up deciding on the following approach.
  - Programmatically generate moonscape models (using Blender's python API)
  - Render multiple images for each model at heights of ~1.5m (I'm assuming that most of the moon images were taken around this height)
  - Use [Llava](https://ollama.com/library/llava) to compare my rendered image to existing moon images
+   - Additionally Llava can help tune the arguments used to render the models (more rocks, less crators, etc)
 
 This approach has the benefit of producing 3D models with realistic moon features that vision models can actually navigate.
 
