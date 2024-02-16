@@ -15,7 +15,7 @@ This approach has the benefit of producing 3D models with realistic moon feature
 ### Moonscape Comparisons
 
 Rendered
-![image](https://github.com/gregology/MoonMaker/assets/1595448/02b0488e-057b-473c-82ed-c9c272c7c163)
+![image](https://github.com/gregology/MoonMaker/assets/1595448/a71dc3b7-cce8-4b0d-a3c4-e4319ffa19b8)
 
 Actual
 ![image](https://github.com/gregology/MoonMaker/assets/1595448/95e1b2e5-97a3-49a8-9577-69f8da2f12b7)
