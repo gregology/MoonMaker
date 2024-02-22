@@ -43,6 +43,10 @@ Detailed 3D models of the lunar surface taken from lunar orbit already exist. We
 
 Knowing exactly when and where images were taken would allow us to accurately mimic the environment as it was when the photo was taken. This would generate more accurate results with less GPU cycles.
 
+### Prompt engineering for image scoring
+
+I'm currently making two separate Ollama API calls to determine how close the rendered images relate to the reference image. Firstly I send the reference image and rendered image to Llava 13b to retrieve analysis on the differences and then I use Mistral 7b convert the analysis to a number between 0 and 1. Llava is limited and doesn't follow instructions very well but there may be some other prompting techniques I can use to get the image scoring from a single prompt given to Llava.
+
 ## Bugs
 
  - Shadows do not fall as expected in some rendered images
