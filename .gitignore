@@ -162,5 +162,4 @@ cython_debug/
 renders/*
 *.blend
 *.blend1
-*.png
 .DS_Store

@@ -1,34 +1,48 @@
 # MoonMaker
 
-## An experiment in producing moon rover training data
+## A procedural lunar surface generator for autonomous rover training
 
-I had an interesting chat with some folks working on autonomous moon rover tech. One of the limitations is training data as there are very few images taken from the surface of the moon. The moon also, has a surprising variety of landscapes.
+I had an interesting chat with some folks developing autonomous rover tech for use on the lunar and martian surfaces. One of the problems they face is the lack of accurate training data. There are very few images from places like the lunar surface. The few images that do exist of the lunar surface are not directly useful as training data for rover imaging systems because the images are;
 
-The two most promising solutions I came up with were;
- - Adding AI filters to video from rocky earth landscapes to make them appear like the lunar surface
- - Creating realistic 3D moon surface models and using generative AI to finetune them
+ - a biassed sample (astronauts likely focused their cameras on the most interesting landscape features)
+ - not at the right perspective for a rover (likely taken at heights ~1.5m)
+ - 2D representations of 3D environments (which makes it difficult to create success metrics)
 
-Here is my approach for the second solution;
- - Programmatically generate moonscape models (using Blender's python API)
- - Render multiple images for each model at heights of ~1.5m (I'm assuming that most of the moon images were taken around this height)
- - Use [Llava](https://ollama.com/library/llava) to compare my rendered image to existing moon images
-   - Additionally Llava can help tune the arguments used to render the models (more rocks, less crators, etc)
+As a proof of concept I decided to use the existing lunar surface images as references to produce more accurate 3D lunar surface models. I created a procedural lunar surface generator using the Blender Python API. The procedural lunar surface generator accepts density attributes for rocks, craters, small craters, hills, and depressions. I then generated multiple 3D models with different density attributes and rendered images at a similar height as a reference image. Finally I used a multimodal model to score the likeness in topology between the rendered images and the reference images.
 
-This approach has the benefit of producing 3D models with realistic moon features that vision models can actually navigate.
+With this process we can fine tune the attributes for the procedural lunar surface generator to create realistic 3D models for training autonomous rovers. Having realistic 3D surface lunar models allow the vision models to navigate at realistic perspectives, camera angles, and in differing lighting conditions. Training in a 3D model environment also means the rover imaging systems can receive useful feedback when it navigates into unsuitable areas like steep embankments.
 
-## Moonscape Comparisons
+## Results
 
-#### Actual Moonscape
+incoming....
 
-![image](https://github.com/gregology/MoonMaker/assets/1595448/95e1b2e5-97a3-49a8-9577-69f8da2f12b7)
+## Training hardware
 
-Note: There is significant bias in our moonscape sample data as;
- - Spacecraft that lands on the moon chooses flatter areas to maximise successful landing
- - Humans are more likely to take photos of novel landscapes
- - The quality of vision sensors continue to change
+I used two GPUs to process the data;
 
-#### Rendered Moonscape
+ - RTX4090 in my gaming / ML rig running Ollama for the multimodal model / LLM
+ - RX 5600 XT in an eGPU enclosure running a [Blender API Flask app](https://github.com/gregology/blender_api) I created for this purpose
 
-![image](https://github.com/gregology/MoonMaker/assets/1595448/a71dc3b7-cce8-4b0d-a3c4-e4319ffa19b8)
+## Future development
 
-Note: The contrast is wrong as the sky is too light and the ground is too dark. Blender is also introducing a haze during the rendering process. The ground is too flat.
+This was a quick proof of concept. Here are some things I need to fix / think about for future development
+
+### Terrestrial testing
+
+The effectiveness of this technique as training data could be tested on Earth by taking similar biassed reference images from a terrestrial landscape, creating a procedural surface generator, training a vision model, and seeing how successfully it navigates the real terrestrial environment.
+
+### Reference videos
+
+I only used reference photos however there is video footage from the lunar surface which may be useful reference material.
+
+### Utilise existing 3D models and rock samples
+
+Detailed 3D models of the lunar surface taken from lunar orbit already exist. We could use these models to create more accurate topology. We could also use 3D models of lunar rock samples to add accurate textures.
+
+### Details of reference images
+
+Knowing exactly when and where images were taken would allow us to accurately mimic the environment as it was when the photo was taken. This would generate more accurate results with less GPU cycles.
+
+## Bugs
+
+ - Shadows do not fall as expected in some rendered images
