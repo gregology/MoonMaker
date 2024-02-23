@@ -16,7 +16,7 @@ def get_encoded_image(image_path):
         encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
     return encoded_string
 
-def prompt_llava(prompt, images):
+def prompt_multimodal(prompt, images):
     data = {
         "model": f"llava:13b",
         "stream": False,
@@ -29,9 +29,9 @@ def prompt_llava(prompt, images):
     response = requests.post(OLLAMA_API_URL, data=json.dumps(data))
     return response.json()['response']
 
-def prompt_mistral(prompt):
+def prompt_llm(prompt):
     data = {
-        "model": "mistral:latest",
+        "model": "miqu:70b_q4_k_m",
         "stream": False,
         "prompt": prompt,
         "options": {
@@ -45,7 +45,7 @@ def image_analysis_prompt(attribute):
     return f"Here are two images, one is a reference image taken from lunar surface and the other is an image rendered from a 3D model to simulate the lunar surface. Provide details of the similarities and differences of these images based on {attribute}?"
 
 def analysis_score_prompt(analysis):
-    return f"```\n{analysis}\n```\nThis is an analysis of similarities bewteen a reference image of the lunar surface and a 3D model rendering. Given this analysis, return a score from 0.0 to 1.0 for how similar the 3D model rendering is to the reference lunar surface image. Do not give an explanation for your score. Only respond with a number between 0.0 and 1.0."
+    return f"```\n{analysis}\n```\nThis is an analysis of similarities between a reference image of the lunar surface and a 3D model rendering. Given this analysis, return a score from 0.0 to 1.0 for how similar the 3D model rendering is to the reference lunar surface image with regard to topography. Do not give an explanation for your score. Only respond with a number between 0.0 and 1.0."
 
 reference_image_path = 'reference.png'
 attributes = ['ridge and valley formations', 'mare and highland areas', 'scale and perspective']
@@ -70,7 +70,7 @@ for unanalysed_image in unanalysed_images:
     for attribute in attributes:
         logging.info(f"analysing `{unanalysed_image['image_path']}` for `{attribute}` attribute")
         analysis_prompt = image_analysis_prompt(attribute)
-        analyses.append(prompt_llava(analysis_prompt, [get_encoded_image(reference_image_path), get_encoded_image(unanalysed_image['image_path'])]))
+        analyses.append(prompt_multimodal(analysis_prompt, [get_encoded_image(reference_image_path), get_encoded_image(unanalysed_image['image_path'])]))
     db.update({'analyses': analyses}, Query().image_path == unanalysed_image['image_path'])
 
 number_extract_pattern = r'\d+\.\d+'
@@ -78,14 +78,18 @@ unscored_images = db.search((Query().analyses != []) & (Query().scores == []))
 for unscored_image in unscored_images:
     logging.info(f"scoring {len(unscored_image['analyses'])} analyses for `{unscored_image['image_path']}`")
     scores = []
-    for analysis in unscored_image['analyses']:
-        # logging.info(f"analysis: '{analysis}'")
-        score_prompt = analysis_score_prompt(analysis)
-        response = prompt_mistral(score_prompt)
-        # logging.info(f"response from analysis: '{response}'")
-        match = re.search(number_extract_pattern, response.replace('3D', ''))
-        scores.append(float(match.group()))
-    db.update({'scores': scores}, Query().image_path == unscored_image['image_path'])
+    try:
+        for analysis in unscored_image['analyses']:
+            score_prompt = analysis_score_prompt(analysis)
+            response = prompt_llm(score_prompt)
+            match = re.search(number_extract_pattern, response.replace('3D', ''))
+            scores.append(float(match.group()))
+        db.update({'scores': scores}, Query().image_path == unscored_image['image_path'])
+    except AttributeError:
+        logging.info(f"bad response for {unscored_image['image_path']}")
+        # Ignore the AttributeError caused when response does not contain number and continue execution of subsequent images
+        pass
+
 
 processed_images = db.search(Query().scores != [])
 
