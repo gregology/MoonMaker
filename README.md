@@ -16,13 +16,17 @@ This approach makes training relatively cheap so multiple models can be produced
 
 ## Results
 
-incoming... still processing... house is warm...
+#### Reference image
+![image](https://github.com/gregology/MoonMaker/assets/1595448/fe279878-80fa-40e6-979e-8af5b0116733)
 
-<reference image> <best rated render>
+#### High scoring rendered image
+![image](https://github.com/gregology/MoonMaker/assets/1595448/6d68b9f1-1c1e-4bd1-a978-e4f8809a2a85)
 
-<best rated model>
+#### High scoring model
+![image](https://github.com/gregology/MoonMaker/assets/1595448/9e27c42e-d28b-401c-9c6c-66e0f7926c39)
 
-<worst rated model>
+#### Low scoring model
+![image](https://github.com/gregology/MoonMaker/assets/1595448/728d0f4c-b692-4297-afd8-78889cf6fb20)
 
 ## Future development
 
